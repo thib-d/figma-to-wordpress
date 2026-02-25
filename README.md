@@ -53,47 +53,7 @@ Go to:
 
 Cloudflare Dashboard → Workers & Pages → Create Worker
 
-Replace the default script with:
-
-export default {
-  async fetch(request) {
-    const url = new URL(request.url);
-
-    // Replace with your Figma site URL
-    const targetUrl = `https://yourproject.figweb.site${url.pathname}${url.search}`;
-
-    const response = await fetch(targetUrl, {
-      method: request.method,
-      headers: request.headers
-    });
-
-    const contentType = response.headers.get("content-type");
-
-    if (contentType && contentType.includes("text/html")) {
-      let html = await response.text();
-
-      const gtagScript = `
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-XXXXXXXXXX');
-        </script>
-      `;
-
-      html = html.replace("<body", `<body>${gtagScript}`);
-
-      return new Response(html, {
-        status: response.status,
-        headers: response.headers
-      });
-    }
-
-    return response;
-  }
-};
+Replace the default script with the content of exemplecloudflareworker.js
 
 Replace:
 
